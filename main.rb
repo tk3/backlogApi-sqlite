@@ -20,14 +20,14 @@ module Blg
           yield(self) if block_given?
         end
 
-        def fetch(resource, options = {})
-          case resource
+        def fetch(name, source)
+          case name
           when :issue_types
-            fetch_issue_types
+            fetch_issue_types(source)
           when :statuses
-            fetch_statuses
+            fetch_statuses(source)
           when :issues
-            fetch_issues options
+            fetch_issues(source)
           end
         end
 
@@ -47,9 +47,7 @@ module Blg
           rows[0][0] == 1
         end
 
-        def fetch_issues(options = {})
-          issues = @api.issues options
-
+        def fetch_issues(issues)
           unless table_exists('issue')
             rows = @db.execute <<-SQL
 CREATE TABLE issues (
@@ -95,9 +93,7 @@ SQL
           end
         end
 
-        def fetch_statuses
-          statuses = @api.statuses(@id_or_key)
-
+        def fetch_statuses(statuses)
           unless table_exists('statuses')
             rows = @db.execute <<-SQL
 CREATE TABLE statuses (
@@ -114,8 +110,7 @@ SQL
           end
         end
 
-        def fetch_issue_types
-          issue_types = @api.issueTypes(@id_or_key)
+        def fetch_issue_types(issue_types)
 
           unless table_exists('issue_types')
             rows = @db.execute <<-SQL
@@ -154,9 +149,9 @@ projects = api.projects
 
 Blg::Query::project(projects[0]['id'], {:endpoint => endpoint, :api_key => api_key}) do |project|
   puts project.id_or_key
-  project.fetch(:issue_types)
-  project.fetch(:statuses)
-  project.fetch(:issues, {'count' => 100})
+  project.fetch(:issue_types, api.issueTypes(project.id_or_key))
+  project.fetch(:statuses, api.statuses(project.id_or_key))
+  project.fetch(:issues, api.issues({'count' => 100}))
 
   project.execute('SELECT * FROM issue_types') do |row|
     p row
@@ -174,6 +169,7 @@ Blg::Query::project(projects[0]['id'], {:endpoint => endpoint, :api_key => api_k
     p row
   end
 
+
   sql =<<-SQL
 SELECT u.name, count(*) FROM issues i
 INNER JOIN users u
@@ -183,7 +179,5 @@ SQL
   project.execute(sql) do |row|
     p row
   end
-
-
 end
 
