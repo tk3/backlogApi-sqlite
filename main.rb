@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require './blg'
+require_relative 'backlog'
 require 'sqlite3'
 
 module Backlog
@@ -53,6 +53,16 @@ SQL
 CREATE TABLE issue_types (
   id   integer unique,
   name text
+);
+SQL
+    end
+
+    def self.milestone_table
+<<-SQL
+CREATE TABLE milestones (
+  id         integer unique,
+  project_id integer
+  name       text
 );
 SQL
     end
