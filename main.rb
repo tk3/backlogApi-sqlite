@@ -33,7 +33,7 @@ SQL
     def self.users_table
 <<-SQL
 CREATE TABLE users (
-  id integer unique,
+  id   integer unique,
   name text
 );
 SQL
@@ -42,7 +42,7 @@ SQL
     def self.statuses_table
 <<-SQL
 CREATE TABLE statuses (
-  id integer unique,
+  id   integer unique,
   name text
 );
 SQL
@@ -51,7 +51,7 @@ SQL
     def self.issue_types_table
 <<-SQL
 CREATE TABLE issue_types (
-  id integer unique,
+  id   integer unique,
   name text
 );
 SQL
