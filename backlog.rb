@@ -3,7 +3,7 @@
 require 'net/http'
 require 'json'
 
-module Blg
+module Backlog
   module Request
     def get(api_path, params = {})
       url = URI.parse(@endpoint)
@@ -17,7 +17,7 @@ module Blg
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
       req = Net::HTTP::Get.new(url.request_uri)
-      req['User-Agent'] = 'blg ' + Blg::VERSION
+      req['User-Agent'] = 'blg ' + Backlog::VERSION
       req['Accept'] = 'application/json'
       res = http.request(req)
 
@@ -26,7 +26,7 @@ module Blg
   end
 end
 
-module Blg
+module Backlog
   module Api
     module Space
       def space
@@ -36,7 +36,7 @@ module Blg
   end
 end
 
-module Blg
+module Backlog
   module Api
     module User
       def users
@@ -46,7 +46,7 @@ module Blg
   end
 end
 
-module Blg
+module Backlog
   module Api
     module Project
       def projects(params = {})
@@ -78,7 +78,7 @@ module Blg
   end
 end
 
-module Blg
+module Backlog
   module Api
     module Priority
       def priorities(params = {})
@@ -88,7 +88,7 @@ module Blg
   end
 end
 
-module Blg
+module Backlog
   module Api
     module Issue
       def issues(params = {})
@@ -98,27 +98,27 @@ module Blg
   end
 end
 
-module Blg
+module Backlog
   module Api
   end
 end
 
-module Blg
+module Backlog
   VERSION = '0.0.1'
 end
 
-module Blg
+module Backlog
 
   class Client
-    include Blg::Request
-    include Blg::Api::User
-    include Blg::Api::Space
-    include Blg::Api::Project
-    include Blg::Api::Category
-    include Blg::Api::Status
-    include Blg::Api::IssueType
-    include Blg::Api::Issue
-    include Blg::Api::Priority
+    include Backlog::Request
+    include Backlog::Api::User
+    include Backlog::Api::Space
+    include Backlog::Api::Project
+    include Backlog::Api::Category
+    include Backlog::Api::Status
+    include Backlog::Api::IssueType
+    include Backlog::Api::Issue
+    include Backlog::Api::Priority
 
     def initialize(endpoint, api_key)
       @endpoint = endpoint
@@ -136,7 +136,7 @@ if __FILE__ == $0
   endpoint = ENV['BACKLOG_API_ENDPOINT']
   api_key = ENV['BACKLOG_API_KEY']
 
-  api = Blg::Client.new(endpoint, api_key)
+  api = Backlog::Client.new(endpoint, api_key)
 
   puts "projects --------"
   projects = api.projects
