@@ -147,48 +147,50 @@ SQL
   end
 end
 
-require 'dotenv'
-Dotenv.load
+if __FILE__ == $0
+end
 
-endpoint = ENV['BACKLOG_API_ENDPOINT']
-api_key = ENV['BACKLOG_API_KEY']
+  require 'dotenv'
+  Dotenv.load
 
-api = Backlog::Client.new(endpoint, api_key)
+  endpoint = ENV['BACKLOG_API_ENDPOINT']
+  api_key = ENV['BACKLOG_API_KEY']
 
-projects = api.projects
+  api = Backlog::Client.new(endpoint, api_key)
 
-project_id = projects[0]['id']
+  projects = api.projects
 
-Backlog::Query.context do |ctx|
-  ctx.fetch(:issue_types, api.issueTypes(project_id))
-  ctx.fetch(:statuses, api.statuses(project_id))
-  ctx.fetch(:issues, api.issues({'count' => 100}))
+  project_id = projects[0]['id']
 
-  ctx.execute('SELECT * FROM issue_types') do |row|
-    p row
-  end
+  Backlog::Query.context do |ctx|
+    ctx.fetch(:issue_types, api.issueTypes(project_id))
+    ctx.fetch(:statuses, api.statuses(project_id))
+    ctx.fetch(:issues, api.issues({'count' => 100}))
 
-  ctx.execute('SELECT * FROM statuses') do |row|
-    p row
-  end
+    ctx.execute('SELECT * FROM issue_types') do |row|
+      p row
+    end
 
-  ctx.execute('SELECT * FROM issues') do |row|
-    p row
-  end
+    ctx.execute('SELECT * FROM statuses') do |row|
+      p row
+    end
 
-  ctx.execute('SELECT * FROM users') do |row|
-    p row
-  end
+    ctx.execute('SELECT * FROM issues') do |row|
+      p row
+    end
 
+    ctx.execute('SELECT * FROM users') do |row|
+      p row
+    end
 
-  sql =<<-SQL
+    sql =<<-SQL
 SELECT u.name, count(*) FROM issues i
 INNER JOIN users u
 ON i.assignee_id  = u.id
 GROUP BY u.id
 SQL
-  ctx.execute(sql) do |row|
-    p row
-  end
+    ctx.execute(sql) do |row|
+      p row
+    end
 end
 
