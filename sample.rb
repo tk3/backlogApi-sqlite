@@ -14,8 +14,9 @@ project_id = api.projects.filter { |project| project['name'] == 'main' }.first['
 
 Backlog::Query.endpoint = endpoint
 Backlog::Query.api_key = api_key
+Backlog::Query.output_db = 'aaaa.db'
 
-Backlog::Query.context "./sample.db" do |ctx|
+Backlog::Query.context do |ctx|
   ctx.project_id = project_id
 
   ctx.fetch_issue_types
