@@ -15,7 +15,9 @@ CREATE TABLE issues (
   issue_type_id integer,
   status_id     integer,
   assignee_id   integer,
-  due_date       text
+  due_date      text,
+  created       text,
+  updated       text
 );
 SQL
     end

@@ -26,14 +26,16 @@ module Backlog
                      else
                        issue['assignee']
                      end
-          @db.execute 'INSERT INTO issues VALUES (?, ?, ?, ?, ?, ?)',
+          @db.execute 'INSERT INTO issues VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [
               issue['id'],
               issue['summary'],
               issue['issueType']['id'],
               issue['status']['id'],
               assignee['id'],
-              issue['dueDate']
+              issue['dueDate'],
+              issue['created'],
+              issue['updated']
             ]
 
           unless assignee['id'] == nil
