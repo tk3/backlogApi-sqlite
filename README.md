@@ -30,3 +30,22 @@ SQL
 end
 ```
 
+```
+$ sqlite3 aaaa.db
+```
+
+```sql
+SELECT i.summary, u.name, s.name FROM issues i
+INNER JOIN users u
+ON u.id = i.assignee_id
+INNER JOIN statuses s
+ON s.id = i.status_id;
+```
+
+```sql
+SELECT u.name, count(*) FROM issues i
+INNER JOIN users u
+ON i.assignee_id  = u.id
+GROUP BY u.id
+```
+
