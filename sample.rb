@@ -20,7 +20,7 @@ Backlog::Query.context do |ctx|
 
   ctx.fetch_issue_types
   ctx.fetch_statuses
-  ctx.fetch_issues {'count' => 100}
+  ctx.fetch_issues({'count' => 100})
 
 end
 
