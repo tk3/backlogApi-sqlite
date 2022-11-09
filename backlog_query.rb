@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative 'backlog'
+require_relative 'lib/backlog'
 require 'sqlite3'
 
 module Backlog
