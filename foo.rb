@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require_relative 'backlog'
-require_relative 'main'
+require_relative 'backlog_query'
 
 require 'dotenv'
 Dotenv.load
