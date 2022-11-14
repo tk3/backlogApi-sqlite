@@ -10,8 +10,8 @@ module Backlog
     include Backlog::Api::Issue
     include Backlog::Api::Priority
 
-    def initialize(endpoint, api_key)
-      @endpoint = endpoint
+    def initialize(api_url, api_key)
+      @api_url = api_url
       @api_key = api_key
     end
   end

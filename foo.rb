@@ -5,10 +5,10 @@ require_relative 'lib/backlog'
 require 'dotenv'
 Dotenv.load
 
-endpoint = ENV['BACKLOG_API_ENDPOINT']
+api_url = ENV['BACKLOG_API_URL']
 api_key = ENV['BACKLOG_API_KEY']
 
-api = Backlog::Client.new(endpoint, api_key)
+api = Backlog::Client.new(api_url, api_key)
 
 puts "projects --------"
 projects = api.projects

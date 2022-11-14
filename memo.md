@@ -1,5 +1,33 @@
 
 
+```ruby
+  1 #!/usr/bin/env ruby
+  2
+  3 require_relative 'lib/backlog'
+  4
+  5 require 'dotenv'
+  6 Dotenv.load
+  7
+  8 api_url = ENV['BACKLOG_API_URL']
+  9 api_key = ENV['BACKLOG_API_KEY']
+ 10
+ 11 api = Backlog::Client.new(api_url, api_key)
+ 12 project_id = api.projects.filter { |project| project['name'] == 'main' }.first['id']
+ 13
+ 14 Backlog::Query.api_url = api_url
+ 15 Backlog::Query.api_key = api_key
+ 16 Backlog::Query.output_db = 'sample.db'
+ 17
+ 18 Backlog::Query.context do |ctx|
+ 19   ctx.project_id = project_id
+ 20
+ 21   ctx.fetch_issue_types
+ 22   ctx.fetch_statuses
+ 23   ctx.fetch_issues({'count' => 100})
+ 24 end
+ 25
+```
+
 ## データベースにアクセスする
 
 ```
@@ -86,6 +114,7 @@ summary|name|name
 課題 その23|課題 次郎|処理済み
 課題 その22|山田 太郎|処理中
 課題 その20|絵文字 三郎|処理中
+...(省略)...
 ```
 
 ## ステータス別の課題の数をカウントする
@@ -115,20 +144,68 @@ name|count(*)
 ## 担当している課題の数をカウントする
 
 ```sql
-SELECT u.name, count(*) FROM issues i
-INNER JOIN users u
+SELECT coalesce(u.name, '担当者なし') as '担当者', count(*) FROM issues i
+LEFT OUTER JOIN users u
 ON i.assignee_id  = u.id
-GROUP BY u.id
+GROUP BY u.id;
 ```
 
 ```
-sqlite> SELECT u.name, count(*) FROM issues i
-   ...> INNER JOIN users u
+sqlite> SELECT coalesce(u.name, '担当者なし') as '担当者', count(*) FROM issues i
+   ...> LEFT OUTER JOIN users u
    ...> ON i.assignee_id  = u.id
    ...> GROUP BY u.id;
-name|count(*)
+担当者|count(*)
+担当者なし|4
 絵文字 三郎|5
 山田 太郎|11
 課題 次郎|5
+```
+
+## 
+
+```
+  1 #!/usr/bin/env ruby
+  2
+  3 require_relative 'lib/backlog'
+  4
+  5 require 'dotenv'
+  6 Dotenv.load
+  7
+  8 api_url = ENV['BACKLOG_API_URL']
+  9 api_key = ENV['BACKLOG_API_KEY']
+ 10
+ 11 api = Backlog::Client.new(api_url, api_key)
+ 12 project_id = api.projects.filter { |project| project['name'] == 'main' }.first['id']
+ 13
+ 14 Backlog::Query.api_url = api_url
+ 15 Backlog::Query.api_key = api_key
+ 16
+ 17 Backlog::Query.context do |ctx|
+ 18   ctx.project_id = project_id
+ 19
+ 20   ctx.fetch_issue_types
+ 21   ctx.fetch_statuses
+ 22   ctx.fetch_issues({'count' => 100})
+ 23
+ 24   sql =<<-SQL
+ 25 SELECT coalesce(u.name, '担当者なし') as '担当者', count(*) FROM issues i
+ 26 LEFT OUTER JOIN users u
+ 27 ON i.assignee_id  = u.id
+ 28 GROUP BY u.id;
+ 29 SQL
+ 30   ctx.execute(sql) do |row|
+ 31     p row
+ 32   end
+ 33 end
+ 34
+```
+
+```
+$ ./sample2.rb
+["担当者なし", 4]
+["絵文字 三郎", 5]
+["山田 太郎", 11]
+["課題 次郎", 5]
 ```
 

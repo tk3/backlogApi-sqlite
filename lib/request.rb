@@ -4,7 +4,7 @@ require 'json'
 module Backlog
   module Request
     def get(api_path, params = {})
-      url = URI.parse(@endpoint)
+      url = URI.parse(@api_url)
 
       query_string = {'apiKey' => @api_key}
       url.path = url.path + api_path
